@@ -163,7 +163,7 @@ st.markdown("""
         }
         
         /* 將交易操作按鈕固定在畫面最下方 */
-        div[data-element-id*="game_controls_container"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker) {
             position: fixed !important;
             bottom: 0 !important;
             left: 0 !important;
@@ -179,21 +179,21 @@ st.markdown("""
         }
         
         /* 手機下方固定面板中，強制每一排按鈕在同一行，不折行 */
-        div[data-element-id*="game_controls_container"] div[data-testid="stHorizontalBlock"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 6px !important;
             margin-bottom: 4px !important;
         }
         
-        div[data-element-id*="game_controls_container"] div[data-testid="column"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="column"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
         }
         
         /* 手機下方固定按鈕的尺寸與字型調整 */
-        div[data-element-id*="game_controls_container"] .stButton>button {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker) .stButton>button {
             font-size: 0.95rem !important;
             padding: 8px 2px !important;
             min-height: 44px !important;
@@ -880,6 +880,7 @@ def main():
                 """, unsafe_allow_html=True)
                 
                 with st.container(key="game_controls_container"):
+                    st.markdown('<div class="controls-marker"></div>', unsafe_allow_html=True)
                     col_buy_panel, col_sell_panel, col_step_panel = st.columns([3, 3, 2.8])
                     
                     is_buy_disabled = st.session_state.cash < 100.0 or st.session_state.current_day_offset >= setup['length'] - 1
