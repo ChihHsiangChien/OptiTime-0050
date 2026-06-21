@@ -173,16 +173,15 @@ st.markdown("""
             margin: 0 !important;
         }
         
-        /* 讓最外層的左右兩大面板（交易區與時間區）在手機上垂直堆疊，各佔滿 100% 寬度；
-           但其內部的各排按鈕（如 1/4、1/2、全部）則強制保持橫向並排，避免按鈕寬度過窄或被擠出畫面 */
-        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] div[data-testid="stHorizontalBlock"] {
+        /* 強制置底控制台內部的所有 columns 保持橫向並排，形成精巧的雙欄與格狀排列 */
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
             flex-wrap: nowrap !important;
-            gap: 6px !important;
+            gap: 4px !important;
             margin-bottom: 4px !important;
         }
         
-        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] div[data-testid="column"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
@@ -190,16 +189,20 @@ st.markdown("""
         
         /* 手機下方固定按鈕的尺寸與字型調整，縮小寬度與高度以節省空間 */
         div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) .stButton>button {
-            font-size: 0.88rem !important;
-            padding: 6px 2px !important;
-            min-height: 38px !important;
-            height: 38px !important;
-            border-radius: 6px !important;
+            font-size: 0.72rem !important;
+            padding: 4px 1px !important;
+            min-height: 32px !important;
+            height: 32px !important;
+            border-radius: 4px !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            text-overflow: clip !important;
+            white-space: nowrap !important;
         }
         
-        /* 主體區塊底部留白，配合置底控制面板的垂直堆疊高度 */
+        /* 主體區塊底部留白，配合超矮置底控制面板 */
         .main .block-container {
-            padding-bottom: 210px !important;
+            padding-bottom: 130px !important;
         }
     }
 </style>
@@ -889,7 +892,7 @@ def main():
                         # 第一行：買入按鈕
                         b_col1, b_col2, b_col3 = st.columns(3)
                         with b_col1:
-                            if st.button("買 1/4", use_container_width=True, key=f"play_buy_25_{setup_idx}", disabled=is_buy_disabled):
+                            if st.button("買25%", use_container_width=True, key=f"play_buy_25_{setup_idx}", disabled=is_buy_disabled):
                                 fraction = 0.25
                                 cash_to_use = st.session_state.cash * fraction
                                 fee = cash_to_use * 0.001425
@@ -914,7 +917,7 @@ def main():
                                 st.rerun()
                                 
                         with b_col2:
-                            if st.button("買 1/2", use_container_width=True, key=f"play_buy_50_{setup_idx}", disabled=is_buy_disabled):
+                            if st.button("買50%", use_container_width=True, key=f"play_buy_50_{setup_idx}", disabled=is_buy_disabled):
                                 fraction = 0.50
                                 cash_to_use = st.session_state.cash * fraction
                                 fee = cash_to_use * 0.001425
@@ -966,7 +969,7 @@ def main():
                         # 第二行：賣出按鈕
                         s_col1, s_col2, s_col3 = st.columns(3)
                         with s_col1:
-                            if st.button("賣 1/4", use_container_width=True, key=f"play_sell_25_{setup_idx}", disabled=is_sell_disabled):
+                            if st.button("賣25%", use_container_width=True, key=f"play_sell_25_{setup_idx}", disabled=is_sell_disabled):
                                 fraction = 0.25
                                 shares_to_sell = st.session_state.shares * fraction
                                 raw_val = shares_to_sell * p_now
@@ -1004,7 +1007,7 @@ def main():
                                 st.rerun()
                                 
                         with s_col2:
-                            if st.button("賣 1/2", use_container_width=True, key=f"play_sell_50_{setup_idx}", disabled=is_sell_disabled):
+                            if st.button("賣50%", use_container_width=True, key=f"play_sell_50_{setup_idx}", disabled=is_sell_disabled):
                                 fraction = 0.50
                                 shares_to_sell = st.session_state.shares * fraction
                                 raw_val = shares_to_sell * p_now
@@ -1082,7 +1085,7 @@ def main():
                         t_col1, t_col2 = st.columns(2)
                         with t_col1:
                             if not is_forward_disabled:
-                                if st.button("前進1天", use_container_width=True, key=f"play_step1_{setup_idx}"):
+                                if st.button("+1天", use_container_width=True, key=f"play_step1_{setup_idx}"):
                                     st.session_state.current_day_offset += 1
                                     st.rerun()
                             else:
@@ -1179,19 +1182,19 @@ def main():
                                         st.rerun()
                                         
                         with t_col2:
-                            if st.button("前進5天", use_container_width=True, key=f"play_step5_{setup_idx}", disabled=is_forward_disabled):
+                            if st.button("+5天", use_container_width=True, key=f"play_step5_{setup_idx}", disabled=is_forward_disabled):
                                 st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 5)
                                 st.rerun()
                                 
                         # 第二行：前進 10 天、前進 20 天
                         t_col3, t_col4 = st.columns(2)
                         with t_col3:
-                            if st.button("前進10天", use_container_width=True, key=f"play_step10_{setup_idx}", disabled=is_forward_disabled):
+                            if st.button("+10天", use_container_width=True, key=f"play_step10_{setup_idx}", disabled=is_forward_disabled):
                                 st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 10)
                                 st.rerun()
                                 
                         with t_col4:
-                            if st.button("前進20天", use_container_width=True, key=f"play_step20_{setup_idx}", disabled=is_forward_disabled):
+                            if st.button("+20天", use_container_width=True, key=f"play_step20_{setup_idx}", disabled=is_forward_disabled):
                                 st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 20)
                                 st.rerun()
                         
