@@ -119,6 +119,93 @@ st.markdown("""
         min-height: 80px !important;
         white-space: pre-line !important;
     }
+    
+    /* 手機版響應式與置底控制台優化 */
+    @media (max-width: 768px) {
+        /* gameplay-metrics 變為精美 2x2 網格，節省空間 */
+        .gameplay-metrics-container {
+            padding: 8px 10px !important;
+            margin-bottom: 10px !important;
+        }
+        .gameplay-metrics-flex {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 6px !important;
+            justify-content: stretch !important;
+        }
+        .metric-box {
+            margin: 0 !important;
+            padding: 6px 4px !important;
+            background: rgba(59, 130, 246, 0.03) !important;
+            border-radius: 6px !important;
+            border: 1px solid rgba(59, 130, 246, 0.1) !important;
+        }
+        .metric-box-label {
+            font-size: 0.75rem !important;
+            margin-bottom: 2px !important;
+        }
+        .metric-box-val {
+            font-size: 1.05rem !important;
+        }
+        .metric-box-subval {
+            font-size: 0.7rem !important;
+            margin-top: 1px !important;
+        }
+        
+        /* 縮小折線圖高度，以確保能與按鈕併入同一畫面中 */
+        .js-plotly-plot {
+            height: 270px !important;
+        }
+        
+        /* 隱藏操作區說明文字，節省高度空間 */
+        .play-instructions {
+            display: none !important;
+        }
+        
+        /* 將交易操作按鈕固定在畫面最下方 */
+        div[data-element-id*="game_controls_container"] {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            background-color: var(--background-color, #ffffff) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15) !important;
+            padding: 8px 12px !important;
+            z-index: 999999 !important;
+            border-top: 1px solid rgba(229, 231, 235, 0.8) !important;
+            margin: 0 !important;
+        }
+        
+        /* 手機下方固定面板中，強制每一排按鈕在同一行，不折行 */
+        div[data-element-id*="game_controls_container"] div[data-testid="stHorizontalBlock"] {
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 6px !important;
+            margin-bottom: 4px !important;
+        }
+        
+        div[data-element-id*="game_controls_container"] div[data-testid="column"] {
+            width: auto !important;
+            flex: 1 1 0% !important;
+            min-width: 0 !important;
+        }
+        
+        /* 手機下方固定按鈕的尺寸與字型調整 */
+        div[data-element-id*="game_controls_container"] .stButton>button {
+            font-size: 0.95rem !important;
+            padding: 8px 2px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            border-radius: 6px !important;
+        }
+        
+        /* 主體區塊底部留白，避免內容被底部的固定面板遮住 */
+        .main .block-container {
+            padding-bottom: 220px !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -749,24 +836,24 @@ def main():
             
             # 當前回合即時資產狀況
             st.markdown(f"""
-            <div style="background-color: rgba(59, 130, 246, 0.05); padding: 15px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-around; text-align: center; flex-wrap: wrap;">
-                    <div style="margin: 5px;">
-                        <div style="font-size: 0.95rem; color: #4B5563;">模擬日期進度</div>
-                        <div style="font-size: 1.6rem; font-weight: 750; color: #1E3A8A;">第 {st.session_state.current_day_offset + 1} / {setup['length']} 天 ({date_now_str})</div>
+            <div class="gameplay-metrics-container" style="background-color: rgba(59, 130, 246, 0.05); padding: 15px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 15px;">
+                <div class="gameplay-metrics-flex" style="display: flex; justify-content: space-around; text-align: center; flex-wrap: wrap;">
+                    <div class="metric-box" style="margin: 5px;">
+                        <div class="metric-box-label" style="font-size: 0.95rem; color: #4B5563;">模擬日期進度</div>
+                        <div class="metric-box-val" style="font-size: 1.6rem; font-weight: 750; color: #1E3A8A;">第 {st.session_state.current_day_offset + 1} / {setup['length']} 天 ({date_now_str})</div>
                     </div>
-                    <div style="margin: 5px;">
-                        <div style="font-size: 0.95rem; color: #4B5563;">當日收盤價</div>
-                        <div style="font-size: 1.6rem; font-weight: 750; color: #3B82F6;">NT$ {p_now:.2f} 元</div>
+                    <div class="metric-box" style="margin: 5px;">
+                        <div class="metric-box-label" style="font-size: 0.95rem; color: #4B5563;">當日收盤價</div>
+                        <div class="metric-box-val" style="font-size: 1.6rem; font-weight: 750; color: #3B82F6;">NT$ {p_now:.2f} 元</div>
                     </div>
-                    <div style="margin: 5px;">
-                        <div style="font-size: 0.95rem; color: #4B5563;">持有部位狀態</div>
-                        <div style="font-size: 1.4rem; font-weight: 750; color: {'#10B981' if st.session_state.shares > 0.0001 else '#EF4444'};">{pos_label}</div>
+                    <div class="metric-box" style="margin: 5px;">
+                        <div class="metric-box-label" style="font-size: 0.95rem; color: #4B5563;">持有部位狀態</div>
+                        <div class="metric-box-val" style="font-size: 1.4rem; font-weight: 750; color: {'#10B981' if st.session_state.shares > 0.0001 else '#EF4444'};">{pos_label}</div>
                     </div>
-                    <div style="margin: 5px;">
-                        <div style="font-size: 0.95rem; color: #2563EB; font-weight: 600;">我的總資產價值</div>
-                        <div style="font-size: 1.8rem; font-weight: 800; color: #2563EB;">TWD {portfolio_value:,.0f} 元</div>
-                        <div style="font-size: 0.85rem; color: #4B5563; font-weight: 500;">(現金: {st.session_state.cash:,.0f} | 股票: {st.session_state.shares * p_now:,.0f})</div>
+                    <div class="metric-box" style="margin: 5px;">
+                        <div class="metric-box-label" style="font-size: 0.95rem; color: #2563EB; font-weight: 600;">我的總資產價值</div>
+                        <div class="metric-box-val" style="font-size: 1.8rem; font-weight: 800; color: #2563EB;">TWD {portfolio_value:,.0f} 元</div>
+                        <div class="metric-box-subval" style="font-size: 0.85rem; color: #4B5563; font-weight: 500;">(現金: {st.session_state.cash:,.0f} | 股票: {st.session_state.shares * p_now:,.0f})</div>
                     </div>
                 </div>
             </div>
@@ -787,328 +874,328 @@ def main():
                 
                 # 操作按鈕區
                 st.markdown("""
-                <div style="background-color: #F3F4F6; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: 600; font-size: 1.1rem; color: #374151;">
+                <div class="play-instructions" style="background-color: #F3F4F6; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: 600; font-size: 1.1rem; color: #374151;">
                     點擊按鈕進行買賣，或點選右側的前進天數以觀察後續股價：
                 </div>
                 """, unsafe_allow_html=True)
                 
-                col_buy_panel, col_sell_panel, col_step_panel = st.columns([3, 3, 2])
-                
-                is_buy_disabled = st.session_state.cash < 100.0 or st.session_state.current_day_offset >= setup['length'] - 1
-                is_sell_disabled = st.session_state.shares <= 0.0001
-                
-                with col_buy_panel:
-                    st.markdown("<div style='text-align: center; font-weight: 700; color: #10B981; margin-bottom: 5px; font-size: 0.95rem;'>買入操作 (剩餘現金)</div>", unsafe_allow_html=True)
-                    b_col1, b_col2, b_col3 = st.columns(3)
-                    with b_col1:
-                        if st.button("買 1/4", use_container_width=True, key=f"play_buy_25_{setup_idx}", disabled=is_buy_disabled):
-                            fraction = 0.25
-                            cash_to_use = st.session_state.cash * fraction
-                            fee = cash_to_use * 0.001425
-                            net_buy_cash = cash_to_use - fee
-                            shares_bought = net_buy_cash / p_now
-                            
-                            old_shares = st.session_state.shares
-                            old_price = st.session_state.buy_price
-                            new_shares = old_shares + shares_bought
-                            
-                            st.session_state.buy_price = (old_shares * old_price + shares_bought * p_now) / new_shares
-                            
-                            if old_shares == 0:
-                                st.session_state.buy_day_offset = st.session_state.current_day_offset
-                                st.session_state.buy_global_idx = curr_global_idx
-                                st.session_state.buy_round_idx = setup_idx
-                                
-                            st.session_state.shares = new_shares
-                            st.session_state.cash -= cash_to_use
-                            st.session_state.total_fees += fee
-                            st.session_state.holding_position = True
-                            st.rerun()
-                            
-                    with b_col2:
-                        if st.button("買 1/2", use_container_width=True, key=f"play_buy_50_{setup_idx}", disabled=is_buy_disabled):
-                            fraction = 0.50
-                            cash_to_use = st.session_state.cash * fraction
-                            fee = cash_to_use * 0.001425
-                            net_buy_cash = cash_to_use - fee
-                            shares_bought = net_buy_cash / p_now
-                            
-                            old_shares = st.session_state.shares
-                            old_price = st.session_state.buy_price
-                            new_shares = old_shares + shares_bought
-                            
-                            st.session_state.buy_price = (old_shares * old_price + shares_bought * p_now) / new_shares
-                            
-                            if old_shares == 0:
-                                st.session_state.buy_day_offset = st.session_state.current_day_offset
-                                st.session_state.buy_global_idx = curr_global_idx
-                                st.session_state.buy_round_idx = setup_idx
-                                
-                            st.session_state.shares = new_shares
-                            st.session_state.cash -= cash_to_use
-                            st.session_state.total_fees += fee
-                            st.session_state.holding_position = True
-                            st.rerun()
-                            
-                    with b_col3:
-                        if st.button("買全部", use_container_width=True, key=f"play_buy_100_{setup_idx}", disabled=is_buy_disabled):
-                            fraction = 1.0
-                            cash_to_use = st.session_state.cash * fraction
-                            fee = cash_to_use * 0.001425
-                            net_buy_cash = cash_to_use - fee
-                            shares_bought = net_buy_cash / p_now
-                            
-                            old_shares = st.session_state.shares
-                            old_price = st.session_state.buy_price
-                            new_shares = old_shares + shares_bought
-                            
-                            st.session_state.buy_price = (old_shares * old_price + shares_bought * p_now) / new_shares
-                            
-                            if old_shares == 0:
-                                st.session_state.buy_day_offset = st.session_state.current_day_offset
-                                st.session_state.buy_global_idx = curr_global_idx
-                                st.session_state.buy_round_idx = setup_idx
-                                
-                            st.session_state.shares = new_shares
-                            st.session_state.cash = 0.0
-                            st.session_state.total_fees += fee
-                            st.session_state.holding_position = True
-                            st.rerun()
-                            
-                with col_sell_panel:
-                    st.markdown("<div style='text-align: center; font-weight: 700; color: #EF4444; margin-bottom: 5px; font-size: 0.95rem;'>賣出操作 (持股部位)</div>", unsafe_allow_html=True)
-                    s_col1, s_col2, s_col3 = st.columns(3)
-                    with s_col1:
-                        if st.button("賣 1/4", use_container_width=True, key=f"play_sell_25_{setup_idx}", disabled=is_sell_disabled):
-                            fraction = 0.25
-                            shares_to_sell = st.session_state.shares * fraction
-                            raw_val = shares_to_sell * p_now
-                            fee = raw_val * 0.001425
-                            tax = raw_val * 0.003
-                            net_cash = raw_val - (fee + tax)
-                            
-                            st.session_state.cash += net_cash
-                            st.session_state.shares -= shares_to_sell
-                            st.session_state.total_fees += (fee + tax)
-                            
-                            buy_cost_total = st.session_state.buy_price * 1.001425
-                            sell_net_total = p_now * (1 - 0.004425)
-                            trade_return = (sell_net_total / buy_cost_total - 1) * 100
-                            
-                            is_cross_round = (st.session_state.buy_round_idx < setup_idx)
-                            st.session_state.current_round_trades.append({
-                                'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
-                                'buy_date': dates[st.session_state.buy_global_idx],
-                                'buy_price': st.session_state.buy_price,
-                                'sell_day_offset': st.session_state.current_day_offset,
-                                'sell_date': dates[curr_global_idx],
-                                'sell_price': p_now,
-                                'trade_return': trade_return,
-                                'action': '賣出 25% (跨回合)' if is_cross_round else '賣出 25%'
-                            })
-                            
-                            if st.session_state.shares <= 0.0001:
-                                st.session_state.shares = 0.0
-                                st.session_state.holding_position = False
-                                st.session_state.buy_price = 0.0
-                                st.session_state.buy_day_offset = -1
-                                st.session_state.buy_global_idx = -1
-                                st.session_state.buy_round_idx = -1
-                            st.rerun()
-                            
-                    with s_col2:
-                        if st.button("賣 1/2", use_container_width=True, key=f"play_sell_50_{setup_idx}", disabled=is_sell_disabled):
-                            fraction = 0.50
-                            shares_to_sell = st.session_state.shares * fraction
-                            raw_val = shares_to_sell * p_now
-                            fee = raw_val * 0.001425
-                            tax = raw_val * 0.003
-                            net_cash = raw_val - (fee + tax)
-                            
-                            st.session_state.cash += net_cash
-                            st.session_state.shares -= shares_to_sell
-                            st.session_state.total_fees += (fee + tax)
-                            
-                            buy_cost_total = st.session_state.buy_price * 1.001425
-                            sell_net_total = p_now * (1 - 0.004425)
-                            trade_return = (sell_net_total / buy_cost_total - 1) * 100
-                            
-                            is_cross_round = (st.session_state.buy_round_idx < setup_idx)
-                            st.session_state.current_round_trades.append({
-                                'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
-                                'buy_date': dates[st.session_state.buy_global_idx],
-                                'buy_price': st.session_state.buy_price,
-                                'sell_day_offset': st.session_state.current_day_offset,
-                                'sell_date': dates[curr_global_idx],
-                                'sell_price': p_now,
-                                'trade_return': trade_return,
-                                'action': '賣出 50% (跨回合)' if is_cross_round else '賣出 50%'
-                            })
-                            
-                            if st.session_state.shares <= 0.0001:
-                                st.session_state.shares = 0.0
-                                st.session_state.holding_position = False
-                                st.session_state.buy_price = 0.0
-                                st.session_state.buy_day_offset = -1
-                                st.session_state.buy_global_idx = -1
-                                st.session_state.buy_round_idx = -1
-                            st.rerun()
-                            
-                    with s_col3:
-                        if st.button("賣全部", use_container_width=True, key=f"play_sell_100_{setup_idx}", disabled=is_sell_disabled):
-                            shares_to_sell = st.session_state.shares
-                            raw_val = shares_to_sell * p_now
-                            fee = raw_val * 0.001425
-                            tax = raw_val * 0.003
-                            net_cash = raw_val - (fee + tax)
-                            
-                            st.session_state.cash += net_cash
-                            st.session_state.shares = 0.0
-                            st.session_state.total_fees += (fee + tax)
-                            
-                            buy_cost_total = st.session_state.buy_price * 1.001425
-                            sell_net_total = p_now * (1 - 0.004425)
-                            trade_return = (sell_net_total / buy_cost_total - 1) * 100
-                            
-                            is_cross_round = (st.session_state.buy_round_idx < setup_idx)
-                            st.session_state.current_round_trades.append({
-                                'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
-                                'buy_date': dates[st.session_state.buy_global_idx],
-                                'buy_price': st.session_state.buy_price,
-                                'sell_day_offset': st.session_state.current_day_offset,
-                                'sell_date': dates[curr_global_idx],
-                                'sell_price': p_now,
-                                'trade_return': trade_return,
-                                'action': '賣出全部 (跨回合)' if is_cross_round else '賣出全部'
-                            })
-                            
-                            st.session_state.shares = 0.0
-                            st.session_state.holding_position = False
-                            st.session_state.buy_price = 0.0
-                            st.session_state.buy_day_offset = -1
-                            st.session_state.buy_global_idx = -1
-                            st.session_state.buy_round_idx = -1
-                            st.rerun()
-                            
-                with col_step_panel:
-                    st.markdown("<div style='text-align: center; font-weight: 700; color: #3B82F6; margin-bottom: 5px; font-size: 0.95rem;'>時間控制</div>", unsafe_allow_html=True)
-                    t_row1_col1, t_row1_col2 = st.columns(2)
-                    t_row2_col1, t_row2_col2 = st.columns(2)
+                with st.container(key="game_controls_container"):
+                    col_buy_panel, col_sell_panel, col_step_panel = st.columns([3, 3, 2.8])
                     
-                    is_forward_disabled = st.session_state.current_day_offset >= setup['length'] - 1
+                    is_buy_disabled = st.session_state.cash < 100.0 or st.session_state.current_day_offset >= setup['length'] - 1
+                    is_sell_disabled = st.session_state.shares <= 0.0001
                     
-                    with t_row1_col1:
-                        if not is_forward_disabled:
-                            if st.button("前進1天", use_container_width=True, key=f"play_step1_{setup_idx}"):
-                                st.session_state.current_day_offset += 1
+                    with col_buy_panel:
+                        st.markdown("<div style='text-align: center; font-weight: 700; color: #10B981; margin-bottom: 5px; font-size: 0.95rem;'>買入操作</div>", unsafe_allow_html=True)
+                        b_col1, b_col2, b_col3 = st.columns(3)
+                        with b_col1:
+                            if st.button("買 1/4", use_container_width=True, key=f"play_buy_25_{setup_idx}", disabled=is_buy_disabled):
+                                fraction = 0.25
+                                cash_to_use = st.session_state.cash * fraction
+                                fee = cash_to_use * 0.001425
+                                net_buy_cash = cash_to_use - fee
+                                shares_bought = net_buy_cash / p_now
+                                
+                                old_shares = st.session_state.shares
+                                old_price = st.session_state.buy_price
+                                new_shares = old_shares + shares_bought
+                                
+                                st.session_state.buy_price = (old_shares * old_price + shares_bought * p_now) / new_shares
+                                
+                                if old_shares == 0:
+                                    st.session_state.buy_day_offset = st.session_state.current_day_offset
+                                    st.session_state.buy_global_idx = curr_global_idx
+                                    st.session_state.buy_round_idx = setup_idx
+                                    
+                                st.session_state.shares = new_shares
+                                st.session_state.cash -= cash_to_use
+                                st.session_state.total_fees += fee
+                                st.session_state.holding_position = True
                                 st.rerun()
-                        else:
-                            if setup_idx < total_setups - 1:
-                                if st.button("結束回合", use_container_width=True, key=f"play_settle_{setup_idx}"):
-                                    # 計算當前資產總值 (不強迫賣出，跨回合攜帶)
-                                    portfolio_val = st.session_state.cash
-                                    if st.session_state.holding_position:
-                                        portfolio_val += st.session_state.shares * p_now
+                                
+                        with b_col2:
+                            if st.button("買 1/2", use_container_width=True, key=f"play_buy_50_{setup_idx}", disabled=is_buy_disabled):
+                                fraction = 0.50
+                                cash_to_use = st.session_state.cash * fraction
+                                fee = cash_to_use * 0.001425
+                                net_buy_cash = cash_to_use - fee
+                                shares_bought = net_buy_cash / p_now
+                                
+                                old_shares = st.session_state.shares
+                                old_price = st.session_state.buy_price
+                                new_shares = old_shares + shares_bought
+                                
+                                st.session_state.buy_price = (old_shares * old_price + shares_bought * p_now) / new_shares
+                                
+                                if old_shares == 0:
+                                    st.session_state.buy_day_offset = st.session_state.current_day_offset
+                                    st.session_state.buy_global_idx = curr_global_idx
+                                    st.session_state.buy_round_idx = setup_idx
                                     
-                                    # 計算此回合累積實際報酬率
-                                    round_return = (portfolio_val / st.session_state.round_start_cash - 1) * 100
+                                st.session_state.shares = new_shares
+                                st.session_state.cash -= cash_to_use
+                                st.session_state.total_fees += fee
+                                st.session_state.holding_position = True
+                                st.rerun()
+                                
+                        with b_col3:
+                            if st.button("買全部", use_container_width=True, key=f"play_buy_100_{setup_idx}", disabled=is_buy_disabled):
+                                fraction = 1.0
+                                cash_to_use = st.session_state.cash * fraction
+                                fee = cash_to_use * 0.001425
+                                net_buy_cash = cash_to_use - fee
+                                shares_bought = net_buy_cash / p_now
+                                
+                                old_shares = st.session_state.shares
+                                old_price = st.session_state.buy_price
+                                new_shares = old_shares + shares_bought
+                                
+                                st.session_state.buy_price = (old_shares * old_price + shares_bought * p_now) / new_shares
+                                
+                                if old_shares == 0:
+                                    st.session_state.buy_day_offset = st.session_state.current_day_offset
+                                    st.session_state.buy_global_idx = curr_global_idx
+                                    st.session_state.buy_round_idx = setup_idx
                                     
-                                    setup_prices = prices[setup['start_idx'] : setup['end_idx'] + 1]
-                                    bh_buy_c = setup_prices[0] * 1.001425
-                                    bh_sell_n = setup_prices[-1] * (1 - 0.004425)
-                                    bh_ret = (bh_sell_n / bh_buy_c - 1) * 100
-                                    
-                                    # 上帝視角完美單次交易報酬率
-                                    _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] : setup['end_idx'] + 1])
-                                    gv_buy_c = gv_buy_p * 1.001425
-                                    gv_sell_n = gv_sell_p * (1 - 0.004425)
-                                    gv_ret = max(0.0, (gv_sell_n / gv_buy_c - 1) * 100)
-                                    
-                                    st.session_state.setup_reports.append({
-                                        'setup_idx': setup_idx,
-                                        'round_start_cash': st.session_state.round_start_cash,
-                                        'round_end_cash': portfolio_val,
-                                        'trade_return': round_return,
-                                        'bh_return': bh_ret,
-                                        'gv_return': gv_ret,
-                                        'trades': list(st.session_state.current_round_trades),
-                                        'action': 'Carried Over' if st.session_state.holding_position else 'Cash Only'
-                                    })
-                                    st.session_state.setup_state = "settled"
+                                st.session_state.shares = new_shares
+                                st.session_state.cash = 0.0
+                                st.session_state.total_fees += fee
+                                st.session_state.holding_position = True
+                                st.rerun()
+                                
+                    with col_sell_panel:
+                        st.markdown("<div style='text-align: center; font-weight: 700; color: #EF4444; margin-bottom: 5px; font-size: 0.95rem;'>賣出操作</div>", unsafe_allow_html=True)
+                        s_col1, s_col2, s_col3 = st.columns(3)
+                        with s_col1:
+                            if st.button("賣 1/4", use_container_width=True, key=f"play_sell_25_{setup_idx}", disabled=is_sell_disabled):
+                                fraction = 0.25
+                                shares_to_sell = st.session_state.shares * fraction
+                                raw_val = shares_to_sell * p_now
+                                fee = raw_val * 0.001425
+                                tax = raw_val * 0.003
+                                net_cash = raw_val - (fee + tax)
+                                
+                                st.session_state.cash += net_cash
+                                st.session_state.shares -= shares_to_sell
+                                st.session_state.total_fees += (fee + tax)
+                                
+                                buy_cost_total = st.session_state.buy_price * 1.001425
+                                sell_net_total = p_now * (1 - 0.004425)
+                                trade_return = (sell_net_total / buy_cost_total - 1) * 100
+                                
+                                is_cross_round = (st.session_state.buy_round_idx < setup_idx)
+                                st.session_state.current_round_trades.append({
+                                    'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
+                                    'buy_date': dates[st.session_state.buy_global_idx],
+                                    'buy_price': st.session_state.buy_price,
+                                    'sell_day_offset': st.session_state.current_day_offset,
+                                    'sell_date': dates[curr_global_idx],
+                                    'sell_price': p_now,
+                                    'trade_return': trade_return,
+                                    'action': '賣出 25% (跨回合)' if is_cross_round else '賣出 25%'
+                                })
+                                
+                                if st.session_state.shares <= 0.0001:
+                                    st.session_state.shares = 0.0
+                                    st.session_state.holding_position = False
+                                    st.session_state.buy_price = 0.0
+                                    st.session_state.buy_day_offset = -1
+                                    st.session_state.buy_global_idx = -1
+                                    st.session_state.buy_round_idx = -1
+                                st.rerun()
+                                
+                        with s_col2:
+                            if st.button("賣 1/2", use_container_width=True, key=f"play_sell_50_{setup_idx}", disabled=is_sell_disabled):
+                                fraction = 0.50
+                                shares_to_sell = st.session_state.shares * fraction
+                                raw_val = shares_to_sell * p_now
+                                fee = raw_val * 0.001425
+                                tax = raw_val * 0.003
+                                net_cash = raw_val - (fee + tax)
+                                
+                                st.session_state.cash += net_cash
+                                st.session_state.shares -= shares_to_sell
+                                st.session_state.total_fees += (fee + tax)
+                                
+                                buy_cost_total = st.session_state.buy_price * 1.001425
+                                sell_net_total = p_now * (1 - 0.004425)
+                                trade_return = (sell_net_total / buy_cost_total - 1) * 100
+                                
+                                is_cross_round = (st.session_state.buy_round_idx < setup_idx)
+                                st.session_state.current_round_trades.append({
+                                    'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
+                                    'buy_date': dates[st.session_state.buy_global_idx],
+                                    'buy_price': st.session_state.buy_price,
+                                    'sell_day_offset': st.session_state.current_day_offset,
+                                    'sell_date': dates[curr_global_idx],
+                                    'sell_price': p_now,
+                                    'trade_return': trade_return,
+                                    'action': '賣出 50% (跨回合)' if is_cross_round else '賣出 50%'
+                                })
+                                
+                                if st.session_state.shares <= 0.0001:
+                                    st.session_state.shares = 0.0
+                                    st.session_state.holding_position = False
+                                    st.session_state.buy_price = 0.0
+                                    st.session_state.buy_day_offset = -1
+                                    st.session_state.buy_global_idx = -1
+                                    st.session_state.buy_round_idx = -1
+                                st.rerun()
+                                
+                        with s_col3:
+                            if st.button("賣全部", use_container_width=True, key=f"play_sell_100_{setup_idx}", disabled=is_sell_disabled):
+                                shares_to_sell = st.session_state.shares
+                                raw_val = shares_to_sell * p_now
+                                fee = raw_val * 0.001425
+                                tax = raw_val * 0.003
+                                net_cash = raw_val - (fee + tax)
+                                
+                                st.session_state.cash += net_cash
+                                st.session_state.shares = 0.0
+                                st.session_state.total_fees += (fee + tax)
+                                
+                                buy_cost_total = st.session_state.buy_price * 1.001425
+                                sell_net_total = p_now * (1 - 0.004425)
+                                trade_return = (sell_net_total / buy_cost_total - 1) * 100
+                                
+                                is_cross_round = (st.session_state.buy_round_idx < setup_idx)
+                                st.session_state.current_round_trades.append({
+                                    'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
+                                    'buy_date': dates[st.session_state.buy_global_idx],
+                                    'buy_price': st.session_state.buy_price,
+                                    'sell_day_offset': st.session_state.current_day_offset,
+                                    'sell_date': dates[curr_global_idx],
+                                    'sell_price': p_now,
+                                    'trade_return': trade_return,
+                                    'action': '賣出全部 (跨回合)' if is_cross_round else '賣出全部'
+                                })
+                                
+                                st.session_state.shares = 0.0
+                                st.session_state.holding_position = False
+                                st.session_state.buy_price = 0.0
+                                st.session_state.buy_day_offset = -1
+                                st.session_state.buy_global_idx = -1
+                                st.session_state.buy_round_idx = -1
+                                st.rerun()
+                                
+                    with col_step_panel:
+                        st.markdown("<div style='text-align: center; font-weight: 700; color: #3B82F6; margin-bottom: 5px; font-size: 0.95rem;'>時間控制</div>", unsafe_allow_html=True)
+                        t_col1, t_col2, t_col3, t_col4 = st.columns(4)
+                        
+                        is_forward_disabled = st.session_state.current_day_offset >= setup['length'] - 1
+                        
+                        with t_col1:
+                            if not is_forward_disabled:
+                                if st.button("前進1天", use_container_width=True, key=f"play_step1_{setup_idx}"):
+                                    st.session_state.current_day_offset += 1
                                     st.rerun()
                             else:
-                                # 最後一關強制結算賣出
-                                if st.button("結算挑戰", use_container_width=True, key=f"play_settle_{setup_idx}"):
-                                    if st.session_state.holding_position:
-                                        st.session_state.holding_position = False
-                                        raw_val = st.session_state.shares * p_now
-                                        fee = raw_val * 0.001425
-                                        tax = raw_val * 0.003
-                                        st.session_state.cash = raw_val - (fee + tax)
-                                        st.session_state.shares = 0.0
-                                        st.session_state.total_fees += (fee + tax)
+                                if setup_idx < total_setups - 1:
+                                    if st.button("結束回合", use_container_width=True, key=f"play_settle_{setup_idx}"):
+                                        # 計算當前資產總值 (不強迫賣出，跨回合攜帶)
+                                        portfolio_val = st.session_state.cash
+                                        if st.session_state.holding_position:
+                                            portfolio_val += st.session_state.shares * p_now
                                         
-                                        buy_cost_total = st.session_state.buy_price * 1.001425
-                                        sell_net_total = p_now * (1 - 0.004425)
-                                        trade_return = (sell_net_total / buy_cost_total - 1) * 100
+                                        # 計算此回合累積實際報酬率
+                                        round_return = (portfolio_val / st.session_state.round_start_cash - 1) * 100
                                         
-                                        is_cross_round = (st.session_state.buy_round_idx < setup_idx)
-                                        st.session_state.current_round_trades.append({
-                                            'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
-                                            'buy_date': dates[st.session_state.buy_global_idx],
-                                            'buy_price': st.session_state.buy_price,
-                                            'sell_day_offset': st.session_state.current_day_offset,
-                                            'sell_date': dates[curr_global_idx],
-                                            'sell_price': p_now,
-                                            'trade_return': trade_return,
-                                            'action': 'Forced Settle (Cross-Round)' if is_cross_round else 'Forced Settle'
+                                        setup_prices = prices[setup['start_idx'] : setup['end_idx'] + 1]
+                                        bh_buy_c = setup_prices[0] * 1.001425
+                                        bh_sell_n = setup_prices[-1] * (1 - 0.004425)
+                                        bh_ret = (bh_sell_n / bh_buy_c - 1) * 100
+                                        
+                                        # 上帝視角完美單次交易報酬率
+                                        _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] : setup['end_idx'] + 1])
+                                        gv_buy_c = gv_buy_p * 1.001425
+                                        gv_sell_n = gv_sell_p * (1 - 0.004425)
+                                        gv_ret = max(0.0, (gv_sell_n / gv_buy_c - 1) * 100)
+                                        
+                                        st.session_state.setup_reports.append({
+                                            'setup_idx': setup_idx,
+                                            'round_start_cash': st.session_state.round_start_cash,
+                                            'round_end_cash': portfolio_val,
+                                            'trade_return': round_return,
+                                            'bh_return': bh_ret,
+                                            'gv_return': gv_ret,
+                                            'trades': list(st.session_state.current_round_trades),
+                                            'action': 'Carried Over' if st.session_state.holding_position else 'Cash Only'
                                         })
-                                        st.session_state.buy_price = 0.0
-                                        st.session_state.buy_day_offset = -1
-                                        st.session_state.buy_global_idx = -1
-                                        st.session_state.buy_round_idx = -1
+                                        st.session_state.setup_state = "settled"
+                                        st.rerun()
+                                else:
+                                    # 最後一關強制結算賣出
+                                    if st.button("結算挑戰", use_container_width=True, key=f"play_settle_{setup_idx}"):
+                                        if st.session_state.holding_position:
+                                            st.session_state.holding_position = False
+                                            raw_val = st.session_state.shares * p_now
+                                            fee = raw_val * 0.001425
+                                            tax = raw_val * 0.003
+                                            st.session_state.cash = raw_val - (fee + tax)
+                                            st.session_state.shares = 0.0
+                                            st.session_state.total_fees += (fee + tax)
+                                            
+                                            buy_cost_total = st.session_state.buy_price * 1.001425
+                                            sell_net_total = p_now * (1 - 0.004425)
+                                            trade_return = (sell_net_total / buy_cost_total - 1) * 100
+                                            
+                                            is_cross_round = (st.session_state.buy_round_idx < setup_idx)
+                                            st.session_state.current_round_trades.append({
+                                                'buy_day_offset': st.session_state.buy_day_offset if not is_cross_round else -1,
+                                                'buy_date': dates[st.session_state.buy_global_idx],
+                                                'buy_price': st.session_state.buy_price,
+                                                'sell_day_offset': st.session_state.current_day_offset,
+                                                'sell_date': dates[curr_global_idx],
+                                                'sell_price': p_now,
+                                                'trade_return': trade_return,
+                                                'action': 'Forced Settle (Cross-Round)' if is_cross_round else 'Forced Settle'
+                                            })
+                                            st.session_state.buy_price = 0.0
+                                            st.session_state.buy_day_offset = -1
+                                            st.session_state.buy_global_idx = -1
+                                            st.session_state.buy_round_idx = -1
+                                            
+                                        # 計算此回合累積實際報酬率
+                                        round_return = (st.session_state.cash / st.session_state.round_start_cash - 1) * 100
                                         
-                                    # 計算此回合累積實際報酬率
-                                    round_return = (st.session_state.cash / st.session_state.round_start_cash - 1) * 100
-                                    
-                                    setup_prices = prices[setup['start_idx'] : setup['end_idx'] + 1]
-                                    bh_buy_c = setup_prices[0] * 1.001425
-                                    bh_sell_n = setup_prices[-1] * (1 - 0.004425)
-                                    bh_ret = (bh_sell_n / bh_buy_c - 1) * 100
-                                    
-                                    # 上帝視角完美單次交易報酬率
-                                    _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] : setup['end_idx'] + 1])
-                                    gv_buy_c = gv_buy_p * 1.001425
-                                    gv_sell_n = gv_sell_p * (1 - 0.004425)
-                                    gv_ret = max(0.0, (gv_sell_n / gv_buy_c - 1) * 100)
-                                    
-                                    st.session_state.setup_reports.append({
-                                        'setup_idx': setup_idx,
-                                        'round_start_cash': st.session_state.round_start_cash,
-                                        'round_end_cash': st.session_state.cash,
-                                        'trade_return': round_return,
-                                        'bh_return': bh_ret,
-                                        'gv_return': gv_ret,
-                                        'trades': list(st.session_state.current_round_trades),
-                                        'action': 'Final Settle'
-                                    })
-                                    st.session_state.setup_state = "settled"
-                                    st.rerun()
-                                    
-                    with t_row1_col2:
-                        if st.button("前進5天", use_container_width=True, key=f"play_step5_{setup_idx}", disabled=is_forward_disabled):
-                            st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 5)
-                            st.rerun()
-                            
-                    with t_row2_col1:
-                        if st.button("前進10天", use_container_width=True, key=f"play_step10_{setup_idx}", disabled=is_forward_disabled):
-                            st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 10)
-                            st.rerun()
-                            
-                    with t_row2_col2:
-                        if st.button("前進20天", use_container_width=True, key=f"play_step20_{setup_idx}", disabled=is_forward_disabled):
-                            st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 20)
-                            st.rerun()
+                                        setup_prices = prices[setup['start_idx'] : setup['end_idx'] + 1]
+                                        bh_buy_c = setup_prices[0] * 1.001425
+                                        bh_sell_n = setup_prices[-1] * (1 - 0.004425)
+                                        bh_ret = (bh_sell_n / bh_buy_c - 1) * 100
+                                        
+                                        # 上帝視角完美單次交易報酬率
+                                        _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] : setup['end_idx'] + 1])
+                                        gv_buy_c = gv_buy_p * 1.001425
+                                        gv_sell_n = gv_sell_p * (1 - 0.004425)
+                                        gv_ret = max(0.0, (gv_sell_n / gv_buy_c - 1) * 100)
+                                        
+                                        st.session_state.setup_reports.append({
+                                            'setup_idx': setup_idx,
+                                            'round_start_cash': st.session_state.round_start_cash,
+                                            'round_end_cash': st.session_state.cash,
+                                            'trade_return': round_return,
+                                            'bh_return': bh_ret,
+                                            'gv_return': gv_ret,
+                                            'trades': list(st.session_state.current_round_trades),
+                                            'action': 'Final Settle'
+                                        })
+                                        st.session_state.setup_state = "settled"
+                                        st.rerun()
+                                        
+                        with t_col2:
+                            if st.button("前進5天", use_container_width=True, key=f"play_step5_{setup_idx}", disabled=is_forward_disabled):
+                                st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 5)
+                                st.rerun()
+                                
+                        with t_col3:
+                            if st.button("前進10天", use_container_width=True, key=f"play_step10_{setup_idx}", disabled=is_forward_disabled):
+                                st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 10)
+                                st.rerun()
+                                
+                        with t_col4:
+                            if st.button("前進20天", use_container_width=True, key=f"play_step20_{setup_idx}", disabled=is_forward_disabled):
+                                st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 20)
+                                st.rerun()
                         
                         
                         
