@@ -158,7 +158,7 @@ st.markdown("""
         }
         
         /* 將交易操作按鈕固定在畫面最下方 */
-        div[data-testid="stVerticalBlock"]:has(.controls-marker) {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.js-plotly-plot)):not(:has(.gameplay-metrics-container)) {
             position: fixed !important;
             bottom: 0 !important;
             left: 0 !important;
@@ -175,21 +175,21 @@ st.markdown("""
         
         /* 外層 columns 會自動堆疊成三排 (買入排、賣出排、時間控制排) */
         /* 但內層 columns (各排裡面的按鈕) 強制保持在同一行，不折行 */
-        div[data-testid="stVerticalBlock"]:has(.controls-marker) [data-testid="column"] div[data-testid="stHorizontalBlock"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.js-plotly-plot)):not(:has(.gameplay-metrics-container)) [data-testid="column"] div[data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 6px !important;
             margin-bottom: 4px !important;
         }
         
-        div[data-testid="stVerticalBlock"]:has(.controls-marker) [data-testid="column"] [data-testid="column"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.js-plotly-plot)):not(:has(.gameplay-metrics-container)) [data-testid="column"] [data-testid="column"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
         }
         
         /* 手機下方固定按鈕的尺寸與字型調整 */
-        div[data-testid="stVerticalBlock"]:has(.controls-marker) .stButton>button {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.js-plotly-plot)):not(:has(.gameplay-metrics-container)) .stButton>button {
             font-size: 0.95rem !important;
             padding: 8px 2px !important;
             min-height: 44px !important;
