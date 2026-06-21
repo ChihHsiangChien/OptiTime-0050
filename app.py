@@ -881,14 +881,12 @@ def main():
                 with st.container(key="game_controls_container"):
                     st.markdown('<div class="controls-marker"></div>', unsafe_allow_html=True)
                     
-                    # 將版面分為左側交易區 (5.5) 與右側時間控制區 (4.5)
-                    col_trade_panel, col_time_panel = st.columns([5.5, 4.5])
-                    
                     is_buy_disabled = st.session_state.cash < 100.0 or st.session_state.current_day_offset >= setup['length'] - 1
                     is_sell_disabled = st.session_state.shares <= 0.0001
                     is_forward_disabled = st.session_state.current_day_offset >= setup['length'] - 1
                     
-                    with col_trade_panel:
+                    # 3x3 佈局，直接呈現 3 列，每列 3 欄
+                    if True:
                         # 第一行：買入按鈕
                         b_col1, b_col2, b_col3 = st.columns(3)
                         with b_col1:
@@ -1080,9 +1078,9 @@ def main():
                                 st.session_state.buy_round_idx = -1
                                 st.rerun()
                                 
-                    with col_time_panel:
-                        # 第一行：前進 1 天、前進 5 天
-                        t_col1, t_col2 = st.columns(2)
+                    if True:
+                        # 第三行：時間按鈕
+                        t_col1, t_col2, t_col3 = st.columns(3)
                         with t_col1:
                             if not is_forward_disabled:
                                 if st.button("+1天", use_container_width=True, key=f"play_step1_{setup_idx}"):
@@ -1186,14 +1184,7 @@ def main():
                                 st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 5)
                                 st.rerun()
                                 
-                        # 第二行：前進 10 天、前進 20 天
-                        t_col3, t_col4 = st.columns(2)
                         with t_col3:
-                            if st.button("+10天", use_container_width=True, key=f"play_step10_{setup_idx}", disabled=is_forward_disabled):
-                                st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 10)
-                                st.rerun()
-                                
-                        with t_col4:
                             if st.button("+20天", use_container_width=True, key=f"play_step20_{setup_idx}", disabled=is_forward_disabled):
                                 st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 20)
                                 st.rerun()
