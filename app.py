@@ -181,7 +181,8 @@ st.markdown("""
             margin-bottom: 4px !important;
         }
         
-        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"],
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="stColumn"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
