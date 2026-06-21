@@ -173,15 +173,16 @@ st.markdown("""
             margin: 0 !important;
         }
         
-        /* 強制置底控制台內部的所有 columns 保持橫向並排，形成精巧的雙欄與格狀排列 */
-        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="stHorizontalBlock"] {
+        /* 讓最外層的左右兩大面板（交易區與時間區）在手機上垂直堆疊，各佔滿 100% 寬度；
+           但其內部的各排按鈕（如 1/4、1/2、全部）則強制保持橫向並排，避免按鈕寬度過窄或被擠出畫面 */
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] div[data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 6px !important;
             margin-bottom: 4px !important;
         }
         
-        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] div[data-testid="column"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
@@ -196,9 +197,9 @@ st.markdown("""
             border-radius: 6px !important;
         }
         
-        /* 主體區塊底部留白，配合超矮置底控制面板 */
+        /* 主體區塊底部留白，配合置底控制面板的垂直堆疊高度 */
         .main .block-container {
-            padding-bottom: 160px !important;
+            padding-bottom: 210px !important;
         }
     }
 </style>
