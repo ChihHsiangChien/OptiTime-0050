@@ -158,7 +158,7 @@ st.markdown("""
         }
         
         /* 將交易操作按鈕固定在畫面最下方 */
-        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) {
             position: fixed !important;
             bottom: 0 !important;
             left: 0 !important;
@@ -174,21 +174,21 @@ st.markdown("""
         }
         
         /* 強制置底控制台內部的所有 columns 保持橫向並排，形成精巧的雙欄與格狀排列 */
-        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="stHorizontalBlock"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 6px !important;
             margin-bottom: 4px !important;
         }
         
-        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="column"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
         }
         
         /* 手機下方固定按鈕的尺寸與字型調整，縮小寬度與高度以節省空間 */
-        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) .stButton>button {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) .stButton>button {
             font-size: 0.88rem !important;
             padding: 6px 2px !important;
             min-height: 38px !important;
