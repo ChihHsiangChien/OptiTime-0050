@@ -158,7 +158,7 @@ st.markdown("""
         }
         
         /* 將交易操作按鈕固定在畫面最下方 */
-        div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .controls-marker):not(:has([data-testid*="Plotly"])):not(:has(iframe)) {
+        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) {
             position: fixed !important;
             bottom: 0 !important;
             left: 0 !important;
@@ -167,39 +167,38 @@ st.markdown("""
             backdrop-filter: blur(12px) !important;
             -webkit-backdrop-filter: blur(12px) !important;
             box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15) !important;
-            padding: 8px 12px !important;
+            padding: 6px 10px !important;
             z-index: 999999 !important;
             border-top: 1px solid rgba(229, 231, 235, 0.8) !important;
             margin: 0 !important;
         }
         
-        /* 外層 columns 會自動堆疊成三排 (買入排、賣出排、時間控制排) */
-        /* 但內層 columns (各排裡面的按鈕) 強制保持在同一行，不折行 */
-        div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .controls-marker):not(:has([data-testid*="Plotly"])):not(:has(iframe)) [data-testid="column"] div[data-testid="stHorizontalBlock"] {
+        /* 強制置底控制台內部的所有 columns 保持橫向並排，形成精巧的雙欄與格狀排列 */
+        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 6px !important;
             margin-bottom: 4px !important;
         }
         
-        div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .controls-marker):not(:has([data-testid*="Plotly"])):not(:has(iframe)) [data-testid="column"] [data-testid="column"] {
+        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="column"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
         }
         
-        /* 手機下方固定按鈕的尺寸與字型調整 */
-        div[data-testid="stVerticalBlock"]:has(> div[data-testid="element-container"] .controls-marker):not(:has([data-testid*="Plotly"])):not(:has(iframe)) .stButton>button {
-            font-size: 0.95rem !important;
-            padding: 8px 2px !important;
-            min-height: 44px !important;
-            height: 44px !important;
+        /* 手機下方固定按鈕的尺寸與字型調整，縮小寬度與高度以節省空間 */
+        .main .block-container div[data-testid="stVerticalBlock"] div[data-testid="stVerticalBlock"]:has(.controls-marker) .stButton>button {
+            font-size: 0.88rem !important;
+            padding: 6px 2px !important;
+            min-height: 38px !important;
+            height: 38px !important;
             border-radius: 6px !important;
         }
         
-        /* 主體區塊底部留白，避免內容被底部的固定面板遮住 */
+        /* 主體區塊底部留白，配合超矮置底控制面板 */
         .main .block-container {
-            padding-bottom: 220px !important;
+            padding-bottom: 160px !important;
         }
     }
 </style>
@@ -877,13 +876,16 @@ def main():
                 
                 with st.container(key="game_controls_container"):
                     st.markdown('<div class="controls-marker"></div>', unsafe_allow_html=True)
-                    col_buy_panel, col_sell_panel, col_step_panel = st.columns([3, 3, 2.8])
+                    
+                    # 將版面分為左側交易區 (5.5) 與右側時間控制區 (4.5)
+                    col_trade_panel, col_time_panel = st.columns([5.5, 4.5])
                     
                     is_buy_disabled = st.session_state.cash < 100.0 or st.session_state.current_day_offset >= setup['length'] - 1
                     is_sell_disabled = st.session_state.shares <= 0.0001
+                    is_forward_disabled = st.session_state.current_day_offset >= setup['length'] - 1
                     
-                    with col_buy_panel:
-                        st.markdown("<div class='control-header' style='text-align: center; font-weight: 700; color: #10B981; margin-bottom: 5px; font-size: 0.95rem;'>買入操作</div>", unsafe_allow_html=True)
+                    with col_trade_panel:
+                        # 第一行：買入按鈕
                         b_col1, b_col2, b_col3 = st.columns(3)
                         with b_col1:
                             if st.button("買 1/4", use_container_width=True, key=f"play_buy_25_{setup_idx}", disabled=is_buy_disabled):
@@ -960,8 +962,7 @@ def main():
                                 st.session_state.holding_position = True
                                 st.rerun()
                                 
-                    with col_sell_panel:
-                        st.markdown("<div class='control-header' style='text-align: center; font-weight: 700; color: #EF4444; margin-bottom: 5px; font-size: 0.95rem;'>賣出操作</div>", unsafe_allow_html=True)
+                        # 第二行：賣出按鈕
                         s_col1, s_col2, s_col3 = st.columns(3)
                         with s_col1:
                             if st.button("賣 1/4", use_container_width=True, key=f"play_sell_25_{setup_idx}", disabled=is_sell_disabled):
@@ -1075,12 +1076,9 @@ def main():
                                 st.session_state.buy_round_idx = -1
                                 st.rerun()
                                 
-                    with col_step_panel:
-                        st.markdown("<div class='control-header' style='text-align: center; font-weight: 700; color: #3B82F6; margin-bottom: 5px; font-size: 0.95rem;'>時間控制</div>", unsafe_allow_html=True)
-                        t_col1, t_col2, t_col3, t_col4 = st.columns(4)
-                        
-                        is_forward_disabled = st.session_state.current_day_offset >= setup['length'] - 1
-                        
+                    with col_time_panel:
+                        # 第一行：前進 1 天、前進 5 天
+                        t_col1, t_col2 = st.columns(2)
                         with t_col1:
                             if not is_forward_disabled:
                                 if st.button("前進1天", use_container_width=True, key=f"play_step1_{setup_idx}"):
@@ -1184,6 +1182,8 @@ def main():
                                 st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 5)
                                 st.rerun()
                                 
+                        # 第二行：前進 10 天、前進 20 天
+                        t_col3, t_col4 = st.columns(2)
                         with t_col3:
                             if st.button("前進10天", use_container_width=True, key=f"play_step10_{setup_idx}", disabled=is_forward_disabled):
                                 st.session_state.current_day_offset = min(setup['length'] - 1, st.session_state.current_day_offset + 10)
