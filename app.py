@@ -152,11 +152,6 @@ st.markdown("""
             margin-top: 1px !important;
         }
         
-        /* 縮小折線圖高度，以確保能與按鈕併入同一畫面中 */
-        .js-plotly-plot {
-            height: 270px !important;
-        }
-        
         /* 隱藏操作區說明文字與子標題，節省空間 */
         .play-instructions, .control-header {
             display: none !important;
@@ -592,7 +587,7 @@ def plot_active_setup_chart(df_full, setup, current_day_offset, trades=[], holdi
             ))
         
     fig.update_layout(
-        height=380,
+        height=300,
         xaxis_title="時間進度 (天)",
         yaxis_title="股價 (元)",
         margin=dict(l=40, r=40, t=10, b=40),
@@ -670,7 +665,7 @@ def plot_settled_setup_chart(df_full, setup, trades=[]):
         ))
         
     fig.update_layout(
-        height=380,
+        height=300,
         xaxis_title="日期",
         yaxis_title="股價 (元)",
         margin=dict(l=40, r=40, t=10, b=40),
