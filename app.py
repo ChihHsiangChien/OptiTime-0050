@@ -157,8 +157,8 @@ st.markdown("""
             height: 270px !important;
         }
         
-        /* 隱藏操作區說明文字，節省高度空間 */
-        .play-instructions {
+        /* 隱藏操作區說明文字與子標題，節省空間 */
+        .play-instructions, .control-header {
             display: none !important;
         }
         
@@ -178,15 +178,16 @@ st.markdown("""
             margin: 0 !important;
         }
         
-        /* 手機下方固定面板中，強制每一排按鈕在同一行，不折行 */
-        div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="stHorizontalBlock"] {
+        /* 外層 columns 會自動堆疊成三排 (買入排、賣出排、時間控制排) */
+        /* 但內層 columns (各排裡面的按鈕) 強制保持在同一行，不折行 */
+        div[data-testid="stVerticalBlock"]:has(.controls-marker) [data-testid="column"] div[data-testid="stHorizontalBlock"] {
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 6px !important;
             margin-bottom: 4px !important;
         }
         
-        div[data-testid="stVerticalBlock"]:has(.controls-marker) div[data-testid="column"] {
+        div[data-testid="stVerticalBlock"]:has(.controls-marker) [data-testid="column"] [data-testid="column"] {
             width: auto !important;
             flex: 1 1 0% !important;
             min-width: 0 !important;
@@ -887,7 +888,7 @@ def main():
                     is_sell_disabled = st.session_state.shares <= 0.0001
                     
                     with col_buy_panel:
-                        st.markdown("<div style='text-align: center; font-weight: 700; color: #10B981; margin-bottom: 5px; font-size: 0.95rem;'>買入操作</div>", unsafe_allow_html=True)
+                        st.markdown("<div class='control-header' style='text-align: center; font-weight: 700; color: #10B981; margin-bottom: 5px; font-size: 0.95rem;'>買入操作</div>", unsafe_allow_html=True)
                         b_col1, b_col2, b_col3 = st.columns(3)
                         with b_col1:
                             if st.button("買 1/4", use_container_width=True, key=f"play_buy_25_{setup_idx}", disabled=is_buy_disabled):
@@ -965,7 +966,7 @@ def main():
                                 st.rerun()
                                 
                     with col_sell_panel:
-                        st.markdown("<div style='text-align: center; font-weight: 700; color: #EF4444; margin-bottom: 5px; font-size: 0.95rem;'>賣出操作</div>", unsafe_allow_html=True)
+                        st.markdown("<div class='control-header' style='text-align: center; font-weight: 700; color: #EF4444; margin-bottom: 5px; font-size: 0.95rem;'>賣出操作</div>", unsafe_allow_html=True)
                         s_col1, s_col2, s_col3 = st.columns(3)
                         with s_col1:
                             if st.button("賣 1/4", use_container_width=True, key=f"play_sell_25_{setup_idx}", disabled=is_sell_disabled):
@@ -1080,7 +1081,7 @@ def main():
                                 st.rerun()
                                 
                     with col_step_panel:
-                        st.markdown("<div style='text-align: center; font-weight: 700; color: #3B82F6; margin-bottom: 5px; font-size: 0.95rem;'>時間控制</div>", unsafe_allow_html=True)
+                        st.markdown("<div class='control-header' style='text-align: center; font-weight: 700; color: #3B82F6; margin-bottom: 5px; font-size: 0.95rem;'>時間控制</div>", unsafe_allow_html=True)
                         t_col1, t_col2, t_col3, t_col4 = st.columns(4)
                         
                         is_forward_disabled = st.session_state.current_day_offset >= setup['length'] - 1
