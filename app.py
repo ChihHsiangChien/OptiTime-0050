@@ -737,22 +737,40 @@ def main():
     # Sidebar 控制面板
     st.sidebar.header("模擬參數設定")
     
-    # 時間範圍設定
+    is_game_active = st.session_state.get('game_active', False)
     today = datetime.date.today()
-    default_start = datetime.date(2015, 1, 1)
     
+    # 初始化回測起始日期於 session_state 中
+    if 'backtest_start_date' not in st.session_state:
+        st.session_state.backtest_start_date = datetime.date(2015, 1, 1)
+        
+    # 快速日期設定按鈕
+    st.sidebar.markdown("**快速日期設定**")
+    col_date1, col_date2 = st.sidebar.columns(2)
+    with col_date1:
+        if st.button("完整歷史", use_container_width=True, disabled=is_game_active, help="設定起始日期為 0050 上市掛牌日 (2003-06-25)"):
+            st.session_state.backtest_start_date = datetime.date(2003, 6, 25)
+            st.rerun()
+    with col_date2:
+        if st.button("近 10 年", use_container_width=True, disabled=is_game_active, help="設定起始日期為 2015-01-01"):
+            st.session_state.backtest_start_date = datetime.date(2015, 1, 1)
+            st.rerun()
+            
+    # 時間範圍設定
     start_date = st.sidebar.date_input(
         "回測起始日期",
-        value=default_start,
         min_value=datetime.date(2003, 6, 25), # 0050 掛牌日
-        max_value=today
+        max_value=today,
+        key="backtest_start_date",
+        disabled=is_game_active
     )
     
     end_date = st.sidebar.date_input(
         "回測結束日期",
         value=today,
         min_value=datetime.date(2003, 6, 25),
-        max_value=today
+        max_value=today,
+        disabled=is_game_active
     )
     
     if start_date >= end_date:
