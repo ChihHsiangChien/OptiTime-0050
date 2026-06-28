@@ -1197,7 +1197,7 @@ def main():
                                             raw_val = st.session_state.shares * p_now
                                             fee = raw_val * 0.001425
                                             tax = raw_val * 0.003
-                                            st.session_state.cash = raw_val - (fee + tax)
+                                            st.session_state.cash += raw_val - (fee + tax)
                                             st.session_state.shares = 0.0
                                             st.session_state.total_fees += (fee + tax)
                                             
