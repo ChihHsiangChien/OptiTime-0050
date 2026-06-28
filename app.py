@@ -1329,12 +1329,25 @@ def main():
                     if st.session_state.current_setup_idx < total_setups:
                         next_setup = st.session_state.setups[st.session_state.current_setup_idx]
                         next_start_price = prices[next_setup['start_idx'] + 10]
+                        curr_end_price = prices[setup['end_idx']]
+                        
                         # 進入新回合的起始總資產價值（現金 ＋ 股票按新回合第一天價格估值）
+                        if st.session_state.holding_position:
+                            # 方案 A：平抑股數以消除跨回合的隨機時間跳空收益 (Gap Return)
+                            # 新股數 = 舊股數 * (前一回合結束價 / 新一回合開始價)
+                            old_shares = st.session_state.shares
+                            new_shares = old_shares * (curr_end_price / next_start_price)
+                            st.session_state.shares = new_shares
+                            
+                            # 同步等比縮放買入均價，以維持未實現損益率一致
+                            st.session_state.buy_price = st.session_state.buy_price * (next_start_price / curr_end_price)
+                            
+                            # 買入日不在當前關卡，設為 -1 避開買入點圖示，但保留成本線與 buy_price
+                            st.session_state.buy_day_offset = -1
+                            
                         portfolio_val_start = st.session_state.cash
                         if st.session_state.holding_position:
                             portfolio_val_start += st.session_state.shares * next_start_price
-                            # 買入日不在當前關卡，設為 -1 避開買入點圖示，但保留成本線與 buy_price / buy_global_idx / buy_round_idx
-                            st.session_state.buy_day_offset = -1
                         st.session_state.round_start_cash = portfolio_val_start
                     
                     st.session_state.current_day_offset = 10
