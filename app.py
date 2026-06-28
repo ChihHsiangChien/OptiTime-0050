@@ -1148,12 +1148,13 @@ def main():
                                         round_return = (portfolio_val / st.session_state.round_start_cash - 1) * 100
                                         
                                         setup_prices = prices[setup['start_idx'] : setup['end_idx'] + 1]
-                                        bh_buy_c = setup_prices[0] * 1.001425
+                                        # 長期持有從第 10 天（使用者可操作的第一天）開始算買入
+                                        bh_buy_c = setup_prices[10] * 1.001425
                                         bh_sell_n = setup_prices[-1] * (1 - 0.004425)
                                         bh_ret = (bh_sell_n / bh_buy_c - 1) * 100
                                         
-                                        # 上帝視角完美單次交易報酬率
-                                        _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] : setup['end_idx'] + 1])
+                                        # 上帝視角完美單次交易報酬率也從第 10 天開始尋找
+                                        _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] + 10 : setup['end_idx'] + 1])
                                         gv_buy_c = gv_buy_p * 1.001425
                                         gv_sell_n = gv_sell_p * (1 - 0.004425)
                                         gv_ret = max(0.0, (gv_sell_n / gv_buy_c - 1) * 100)
@@ -1206,12 +1207,13 @@ def main():
                                         round_return = (st.session_state.cash / st.session_state.round_start_cash - 1) * 100
                                         
                                         setup_prices = prices[setup['start_idx'] : setup['end_idx'] + 1]
-                                        bh_buy_c = setup_prices[0] * 1.001425
+                                        # 長期持有從第 10 天（使用者可操作的第一天）開始算買入
+                                        bh_buy_c = setup_prices[10] * 1.001425
                                         bh_sell_n = setup_prices[-1] * (1 - 0.004425)
                                         bh_ret = (bh_sell_n / bh_buy_c - 1) * 100
                                         
-                                        # 上帝視角完美單次交易報酬率
-                                        _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] : setup['end_idx'] + 1])
+                                        # 上帝視角完美單次交易報酬率也從第 10 天開始尋找
+                                        _, gv_buy_p, _, gv_sell_p, _ = find_optimal_trade(df_result.iloc[setup['start_idx'] + 10 : setup['end_idx'] + 1])
                                         gv_buy_c = gv_buy_p * 1.001425
                                         gv_sell_n = gv_sell_p * (1 - 0.004425)
                                         gv_ret = max(0.0, (gv_sell_n / gv_buy_c - 1) * 100)
