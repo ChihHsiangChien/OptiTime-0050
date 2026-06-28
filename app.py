@@ -22,7 +22,6 @@ st.markdown("""
     /* 隱藏 Streamlit 預設元件（主選單、頁尾、部署按鈕） */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
     .stDeployButton {display: none !important;}
     div[data-testid="stDecoration"] {display: none !important;}
     .viewerBadge_container__17x9a, .viewerBadge_link__1s137, a[href*="streamlit.io"] {display: none !important;}
