@@ -11,7 +11,7 @@ import random
 # 1. 頁面設定與精美樣式 (Page Config & Custom CSS)
 # =====================================================================
 st.set_page_config(
-    page_title="0050 實時交易模擬挑戰 | OptiTime-0050",
+    page_title="0050 實時交易模擬挑戰",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -19,6 +19,49 @@ st.set_page_config(
 # 注入 CSS 提升 UI 視覺質感 (玻璃擬態、漸層與現代字型)
 st.markdown("""
 <style>
+    /* 隱藏 Streamlit 預設元件（主選單、頁尾、部署按鈕） */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stDeployButton {display: none !important;}
+    div[data-testid="stDecoration"] {display: none !important;}
+    .viewerBadge_container__17x9a, .viewerBadge_link__1s137, a[href*="streamlit.io"] {display: none !important;}
+
+    /* 買賣與前進天數按鈕底色區隔 */
+    div[class*="st-key-play_buy"] button {
+        background-color: #10B981 !important; /* 綠色 */
+        color: white !important;
+        border: none !important;
+    }
+    div[class*="st-key-play_buy"] button:hover:not(:disabled) {
+        background-color: #059669 !important;
+    }
+    
+    div[class*="st-key-play_sell"] button {
+        background-color: #EF4444 !important; /* 紅色 */
+        color: white !important;
+        border: none !important;
+    }
+    div[class*="st-key-play_sell"] button:hover:not(:disabled) {
+        background-color: #DC2626 !important;
+    }
+    
+    div[class*="st-key-play_step"] button,
+    div[class*="st-key-play_settle"] button {
+        background-color: #3B82F6 !important; /* 藍色 */
+        color: white !important;
+        border: none !important;
+    }
+    div[class*="st-key-play_step"] button:hover:not(:disabled),
+    div[class*="st-key-play_settle"] button:hover:not(:disabled) {
+        background-color: #2563EB !important;
+    }
+    
+    div[class*="st-key-play_"] button:disabled {
+        background-color: #E5E7EB !important;
+        color: #9CA3AF !important;
+    }
+
     /* 引入 Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap');
     
@@ -157,10 +200,10 @@ st.markdown("""
             display: none !important;
         }
         
-        /* 將交易操作按鈕固定在畫面最下方 */
+        /* 將交易操作按鈕固定在畫面最下方（上移 50px 避開 Streamlit Cloud 底部工具列） */
         div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) {
             position: fixed !important;
-            bottom: 0 !important;
+            bottom: 50px !important;
             left: 0 !important;
             right: 0 !important;
             background-color: var(--background-color, #ffffff) !important;
@@ -171,6 +214,7 @@ st.markdown("""
             z-index: 999999 !important;
             border-top: 1px solid rgba(229, 231, 235, 0.8) !important;
             margin: 0 !important;
+            gap: 4px !important; /* 縮小垂直排版元件間的間隙，使三行按鈕更緊湊 */
         }
         
         /* 強制置底控制台內部的所有 columns 保持橫向並排，形成精巧的雙欄與格狀排列 */
@@ -178,7 +222,12 @@ st.markdown("""
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             gap: 4px !important;
-            margin-bottom: 4px !important;
+            margin-bottom: 0px !important; /* 設為 0px，由父容器的 gap 統一微調，減少垂直間距 */
+        }
+        
+        /* 隱藏或縮減標記點元件所佔用的額外空間 */
+        div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div:has(> .controls-marker) {
+            display: none !important;
         }
         
         div[data-testid="stVerticalBlock"]:has(.controls-marker):not(:has(.gameplay-metrics-container)) div[data-testid="column"],
@@ -201,9 +250,9 @@ st.markdown("""
             white-space: nowrap !important;
         }
         
-        /* 主體區塊底部留白，配合超矮置底控制面板 */
+        /* 主體區塊底部留白，配合超矮置底控制面板與上移的按鈕 */
         .main .block-container {
-            padding-bottom: 130px !important;
+            padding-bottom: 180px !important;
         }
     }
 </style>
